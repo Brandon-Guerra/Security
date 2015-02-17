@@ -81,9 +81,9 @@ public class SimpleWebServer {
 		}
 		
 		else {
-			 If the request is NOT a GET, 
+			 /*If the request is NOT a GET, 
 			   return an error saying this server
-			   does not implement the requested command. 
+			   does not implement the requested command. */
 			osw.write(("HTTP/1.0 501 Not Implemented\n\n"));
 		}
 		
