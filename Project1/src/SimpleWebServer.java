@@ -73,7 +73,7 @@ public class SimpleWebServer {
 			serveFile (osw, pathname);
 		}
 		
-		if (command.equals("GET")) {
+		if (command.equals("PUT")) {
 			/* If the response is a PUT,
 			   try to store the file the
 			   the user is requesting
