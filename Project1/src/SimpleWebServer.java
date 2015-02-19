@@ -16,6 +16,8 @@ and has been modified by Brandon Guerra.
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class SimpleWebServer {
 	
@@ -34,11 +36,19 @@ public class SimpleWebServer {
 		while (true) {
 			/* Wait for a connection from a client. */
 			Socket s = dServerSocket.accept();
+
+			/* Authenticate connection with client.
+			   If authentication fails, disconnect 
+			   from client. */
+//			if (!authenticateClient()){
+//				s.close();
+//			}
 			
 			/* Then, process the client's request. */
 			processRequest(s);
 		}
 	}
+	
 
 	/* Reads the HTTP request from the client and
 	   responds with the file the user requested or
@@ -79,6 +89,7 @@ public class SimpleWebServer {
 			   try to store the file the
 			   the user is requesting. */
 			storeFile (br, osw, pathname);
+			logEntry(pathname, "PUT");
 		}
 		
 		else {
@@ -93,11 +104,11 @@ public class SimpleWebServer {
 	}
 	
 	public void serveFile (OutputStreamWriter osw, String pathname) throws Exception {
-		
-		System.out.println("serve file called");
+
 		FileReader fr = null;
 		int c = -1;
-		StringBuffer sb = new StringBuffer();
+		int sentBytes = 0;
+		int MAX_DOWNLOAD_LIMIT = 1000000000;
 		
 		/* Remove the initial slash at the beginning
 		   of the pathname in the request. */
@@ -125,12 +136,28 @@ public class SimpleWebServer {
 		   and read, then return an OK response code and 
 		   send the contents of the file. */
 		osw.write ("HTTP/1.0 200 OK\n\n");
-		while (c != -1) {
-			sb.append((char)c);
+		while ((c != -1) && (sentBytes < MAX_DOWNLOAD_LIMIT)) {
+			osw.write(c);
+			sentBytes++;
 			c = fr.read();
 		}
+
+		/* If the file exceeds the maximum file
+		   size limit, write a log entry to 
+		   error_log and return a 403 
+		   Forbidden HTTP response code. */
+		if (sentBytes == MAX_DOWNLOAD_LIMIT) {
+			osw.write (" HTTP/1.0 403 Forbidden");
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			//get current date time with Calendar()
+	   		Calendar cal = Calendar.getInstance();
+			PrintWriter writer = new PrintWriter("error_log.txt", "UTF-8");
+			String time = dateFormat.format(cal.getTime());
+			writer.printf("Max download limit exceeded -> %s\n", time);
+			writer.close();
+		}
+
 		fr.close();
-		osw.write (sb.toString());
 	}
 	
 	public void storeFile(BufferedReader br, OutputStreamWriter osw, String pathname) throws Exception {
@@ -139,7 +166,7 @@ public class SimpleWebServer {
 		try {
 			fw = new FileWriter (pathname);
 			String s = br.readLine();
-			while (s != null) {
+			while (!s.isEmpty()) {
 				fw.write (s);
 				s = br.readLine();
 			}
@@ -150,16 +177,19 @@ public class SimpleWebServer {
 			osw.write ("HTTP/1.0 500 Internal Server Error");
 		}
 	}
-	
-	public void logEntry(String filename,String record) throws IOException {
 
+	public void logEntry(String filename,String record) {
+		try {
 		FileWriter fw = new FileWriter (filename, true);
 		fw.write (getTimestamp() + " " + record);
 		fw.close();
+		}
+		catch (Exception e) {
+			System.out.println("Unable to log entry");
+		}
 	}
 	
 	public String getTimestamp() {
-
 		return (new Date()).toString();
 	}
 	
