@@ -49,6 +49,11 @@ public class SimpleWebServer {
 		}
 	}
 	
+	public Boolean authenticateClient() {
+		String username = "user";
+		String password = "pass";
+		return true;
+	}
 
 	/* Reads the HTTP request from the client and
 	   responds with the file the user requested or
@@ -188,7 +193,7 @@ public class SimpleWebServer {
 			System.out.println("Unable to log entry");
 		}
 	}
-	
+
 	public String getTimestamp() {
 		return (new Date()).toString();
 	}
