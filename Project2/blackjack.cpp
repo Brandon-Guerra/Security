@@ -43,8 +43,6 @@ int main(int argc, char** argv) {
 	<< "Tough Luck." << endl << "Deal hand? (y or n)" << endl;
 	cin >> input;
 
-	// stringCopy(answer, input);
-
 	bool playGame = false;
 	char dealerHand [10];
 
