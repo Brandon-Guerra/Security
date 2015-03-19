@@ -18,7 +18,6 @@ Written by Brandon Guerra
 
 using namespace std;
 
-char *stringCopy(char *dest, const char *src);
 bool checkToPlay(const char input);
 void dealCards(char hand [], int value []);
 char getCardVal(int index);
@@ -33,10 +32,8 @@ int main(int argc, char** argv) {
 	int randOne = rand() % 10 + 2;
 	int randTwo = rand() %  9 + 2;
 
-	char input[5];
-
-	char answer[2] = "A";
-	char playerHand [10];
+	char input[2];
+	char playerHand [4];
 	playerHand[0] = getCardVal(randOne);
 	playerHand[1] = getCardVal(randTwo);
 
@@ -49,7 +46,7 @@ int main(int argc, char** argv) {
 	bool playGame = false;
 	char dealerHand [10];
 
-	playGame = checkToPlay(answer[0]);
+	playGame = checkToPlay(input[0]);
 
 	while(playGame) {
 
@@ -78,11 +75,6 @@ int main(int argc, char** argv) {
 			playGame = false;
 		}
 	}
-}
-
-char *stringCopy(char *dest, const char *src) {
-	while((*dest++ == *src++) != '\0');
-	return dest;
 }
 
 bool checkToPlay(const char input) {
