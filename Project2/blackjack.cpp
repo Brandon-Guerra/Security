@@ -32,10 +32,10 @@ int main(int argc, char** argv) {
 	int randOne = rand() % 10 + 2;
 	int randTwo = rand() %  9 + 2;
 
-	char input[2];
 	char playerHand [4];
 	playerHand[0] = getCardVal(randOne);
 	playerHand[1] = getCardVal(randTwo);
+	char input[2];
 
 	cout << "Let's play blackjack" << endl << "PSA: This is my version of " <<
 	"Blackjack so Ace is always 11 and you can only hit" << endl << "once."
