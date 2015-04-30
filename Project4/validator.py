@@ -40,9 +40,24 @@ def listPersons():
     for row in allRows:
         print row[0], row[1]
 
+def deletePerson(info):
+    if info[0].isdigit():
+        phone = info[0]
+        sql.execute('DELETE FROM persons WHERE phone=?', (phone,))
+        connection.commit()
+
+        print 'Successfully deleted ' + phone + ' from the database'
+
+    else:
+        name = info[0]
+        sql.execute('DELETE FROM persons WHERE name=?', (name,))
+        connection.commit()
+
+        print 'Successfully deleted ' + name + ' from the database'
+
 print '\n'
 print 'Telephone Listing'
-print 'Type \'help\' for a list of supported commands'
+print 'Type \'help\' for a list of supported commands or \'q\' to quit'
 
 while not userQuit:
 
@@ -53,6 +68,9 @@ while not userQuit:
     if input == 'help':
         print commands
 
+    if input == 'q':
+        userQuit = True
+
     userCommand = input.split()
 
     if userCommand[0] == 'ADD':
@@ -61,3 +79,9 @@ while not userQuit:
 
     if userCommand[0] == 'LIST':
         listPersons()
+
+    if userCommand[0] == 'DEL':
+        userCommand.pop(0)
+        deletePerson(userCommand)
+
+connection.close()
